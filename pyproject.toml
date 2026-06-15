@@ -1,0 +1,59 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mithridate"
+version = "0.1.0"
+description = "A hardened threat-intelligence agent that treats all ingested intel as hostile input"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.7",
+    "anthropic>=0.30",
+    "httpx>=0.27",
+    "typer>=0.12",
+    "fastapi>=0.111",
+    "uvicorn>=0.30",
+    "stix2>=3.0",
+    "rich>=13.7",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.4",
+    "mypy>=1.10",
+    "pytest>=8.2",
+    "pytest-asyncio>=0.23",
+    "pytest-cov>=5.0",
+    "httpx>=0.27",
+]
+
+[project.scripts]
+mithridate = "mithridate.cli.main:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mithridate"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["mithridate", "eval", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "C4", "TCH", "PIE", "RUF"]
+ignore = ["B008"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests", "eval"]
+addopts = "--tb=short"
+
+[tool.coverage.run]
+source = ["mithridate"]
