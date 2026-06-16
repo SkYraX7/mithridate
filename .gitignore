@@ -14,3 +14,4 @@ build/
 stix_bundle.json
 .env
 .env.*
+!.env.example

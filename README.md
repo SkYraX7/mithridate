@@ -84,23 +84,71 @@ mithridate eval                # full pipeline metrics (requires ANTHROPIC_API_K
 
 ### 1. Install
 
+**One-command setup (recommended)**
+
+| Platform | Command |
+|---|---|
+| macOS / Linux / WSL | `bash scripts/setup.sh` |
+| Windows (PowerShell) | `.\scripts\setup.ps1` |
+
+The script auto-detects your Python version, installs 3.11 if missing (via Homebrew on macOS, apt or pyenv on Linux/WSL, or winget on Windows), creates a `.venv`, and installs all dependencies.
+
+**Manual setup**
+
+Requirements: Python 3.11+. Check with `python3 --version`.
+
+*macOS / Linux / WSL:*
 ```bash
 git clone <repo>
 cd mithridate
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+```
+
+*Windows (PowerShell):*
+```powershell
+git clone <repo>
+cd mithridate
+python -m venv .venv; .\.venv\Scripts\activate
+pip install -e ".[dev]"
+```
+
+*WSL — if Python 3.11 is not available via `apt`:*
+
+Ubuntu 22.04+ ships Python 3.11 in the standard repos (`sudo apt install python3.11 python3.11-venv`). For older distros, install via pyenv:
+
+```bash
+sudo apt install -y build-essential curl libssl-dev zlib1g-dev libbz2-dev \
+    libreadline-dev libsqlite3-dev libffi-dev git
+curl https://pyenv.run | bash
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init --path)" && eval "$(pyenv init -)"
+pyenv install 3.11.9 && pyenv local 3.11.9
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 ```
 
-### 2. Set your API key
-
-Create a `.env` file in the project root (it is gitignored):
-
-```bash
-echo "ANTHROPIC_API_KEY=sk-ant-..." > .env
+*Windows — if Python 3.11 is not installed:*
+```powershell
+winget install Python.Python.3.11
+# Open a new terminal, then follow the manual Windows steps above.
 ```
 
-The CLI loads it automatically via `python-dotenv`. You can also export it in your shell —
-either works. Never commit the key.
+### 2. Set your API key
+
+Copy `.env.example` to `.env` and add your key (`.env` is gitignored — never commit it):
+
+```bash
+# macOS / Linux / WSL
+cp .env.example .env
+# then edit .env and replace the placeholder with your real key
+
+# Windows
+Copy-Item .env.example .env
+# then open .env and replace the placeholder
+```
+
+The CLI loads it automatically via `python-dotenv`. You can also `export ANTHROPIC_API_KEY=...` in your shell — either works.
 
 ### 3. Run the pipeline
 
